@@ -1,7 +1,8 @@
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Label, Line, LineChart } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Label, Line, LineChart, Legend, ReferenceLine } from 'recharts';
 import { Typography, Paper, TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Link } from '@mui/material';
 import moment from 'moment';
 import { Result } from '../App';
+import { useState } from 'react';
 
 const columns: any = [
     { id: 'year', label: '' },
@@ -68,9 +69,28 @@ const createData = (result: Result) => {
     data.growth = Object.values(growthDict)
     return data
 }
+function CustomTooltip({ payload, label, active }: any) {
+    console.log(payload)
+    if (active) {
+        const max = payload.reduce((max: number, p: any) => p.value > max ? p.value : max, 0)
+        const min = payload.reduce((min: number, p: any) => p.value < min ? p.value : min, max)
+        const avg = payload.reduce((avg: number, p: any) => avg + p.value, 0) / payload.length
+        return (
+            <div>
+                <Typography>{`取引数: ${label}`}</Typography>
+                <Typography>{`平均値: ${Math.floor(avg / 10000) + "万"}`}</Typography>
+                <Typography>{`最大値: ${Math.floor(max / 10000) + "万"}`}</Typography>
+                <Typography>{`最小値: ${Math.floor(min / 10000) + "万"}`}</Typography>
+            </div>
+        );
+    }
+
+    return null;
+}
 
 const Growth: React.FC<Props> = ({ result }) => {
     const data: { balance: any[], growth: any } = createData(result)
+
     return (
         <div>
             <div style={{ marginTop: 10, marginBottom: 10, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -85,6 +105,7 @@ const Growth: React.FC<Props> = ({ result }) => {
                             width={500}
                             height={400}
                             data={data.balance}
+
                             margin={{
                                 top: 20,
                                 right: 20,
@@ -92,16 +113,16 @@ const Growth: React.FC<Props> = ({ result }) => {
                                 bottom: 20,
                             }}
                         >
+                            <Tooltip content={<CustomTooltip />} />
                             <CartesianGrid vertical={false} />
+                            <ReferenceLine y={result.inputData.bankruptcyLevel * result.inputData.balance} label="Max" stroke="red" />
                             <XAxis xAxisId="0" dataKey="index" />
                             <XAxis xAxisId="1" dataKey="monthIndex" allowDuplicatedCategory={false} tickFormatter={(v, i) => i === 0 ? "" : v + "ヶ月目"} />
                             <YAxis domain={['dataMin', 'dataMax']} tickFormatter={(v) => Math.floor(v / 10000) + "万"} />
-                            <Tooltip />
                             {result.simulations.map((sim) => {
                                 return <Line key={sim.id} type="monotone" dataKey={sim.id} strokeWidth={1} stroke="#38b48b" fill="#7ebeab" dot={false} />
                             })}
                             <Line key={"avg"} dataKey={"avg"} strokeWidth={1} stroke="#ff1493" fill="#ff1493" dot={false} />
-                            <Line key={"bankruptcyBalance"} dataKey={"bankruptcyBalance"} strokeWidth={1} stroke="#ff0000" fill="#ff0000" dot={false} />
                         </LineChart>
                     </ResponsiveContainer>
                 </div>
