@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/fx_asset_simulator/static/css/main.073c9b0a.css",
-    "main.js": "/fx_asset_simulator/static/js/main.0adffa94.js",
+    "main.js": "/fx_asset_simulator/static/js/main.ab927e17.js",
     "static/js/787.de382eb1.chunk.js": "/fx_asset_simulator/static/js/787.de382eb1.chunk.js",
     "index.html": "/fx_asset_simulator/index.html",
     "main.073c9b0a.css.map": "/fx_asset_simulator/static/css/main.073c9b0a.css.map",
-    "main.0adffa94.js.map": "/fx_asset_simulator/static/js/main.0adffa94.js.map",
+    "main.ab927e17.js.map": "/fx_asset_simulator/static/js/main.ab927e17.js.map",
     "787.de382eb1.chunk.js.map": "/fx_asset_simulator/static/js/787.de382eb1.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.073c9b0a.css",
-    "static/js/main.0adffa94.js"
+    "static/js/main.ab927e17.js"
   ]
 }
