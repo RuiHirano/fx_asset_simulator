@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import Header from './components/Header';
-import { Paper, Typography } from '@mui/material';
+import { Box, Paper, Typography } from '@mui/material';
 import Title from './components/Title';
 import Form from './components/Form';
 import ResultBoard from './components/ResultBoard';
@@ -163,7 +163,7 @@ function App() {
   return (
     <div style={{ backgroundColor: '#f8f8ff' }}>
       <Header title="FX、CFD用資産シミュレーション" />
-      <div style={{ paddingLeft: 100, paddingRight: 100, paddingBottom: 100 }}>
+      <Box sx={{ paddingLeft: { lg: 40, md: 10, sm: 5, xs: 3 }, paddingRight: { lg: 40, md: 10, sm: 5, xs: 3 } }} style={{ paddingBottom: 100 }}>
         <div style={{ marginTop: 40 }}>
           <Title title="FX、CFD用資産シミュレーション" description='FX、CFDにおける取引開始時の口座資産、想定する損失額や損益比率、勝率等を入力すると、口座資産の変化をシミュレーションすることができます。 1回のトレードでどの程度のリスクをとり、どの程度のリターンを狙っていけばよいのか、そしてどの程度の勝率があれば資産が増えていくのかをイメージすることができます。 投資戦略を考える上での参考データとしてご活用ください。' />
         </div>
@@ -175,7 +175,7 @@ function App() {
             <ResultBoard result={result} />
           </div>
         }
-      </div>
+      </Box>
     </div>
   );
 }
