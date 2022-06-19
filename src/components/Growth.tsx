@@ -70,7 +70,6 @@ const createData = (result: Result) => {
     return data
 }
 function CustomTooltip({ payload, label, active }: any) {
-    console.log(payload)
     if (active) {
         const max = payload.reduce((max: number, p: any) => p.value > max ? p.value : max, 0)
         const min = payload.reduce((min: number, p: any) => p.value < min ? p.value : min, max)
