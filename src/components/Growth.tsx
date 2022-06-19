@@ -77,7 +77,7 @@ const Growth: React.FC<Props> = ({ result }) => {
                 <Typography style={{ fontSize: 20, fontWeight: 'bold', color: '#393f4c' }}>{'資産推移'}</Typography>
             </div>
             <div style={{
-                height: 500, padding: 20
+                padding: 20
             }}>
                 <div style={{ height: 300 }}>
                     <ResponsiveContainer width="100%" height="100%">
@@ -109,7 +109,7 @@ const Growth: React.FC<Props> = ({ result }) => {
                 <div style={{ marginTop: 10, marginBottom: 10, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     <Typography style={{ fontSize: 20, fontWeight: 'bold', color: '#393f4c' }}>{'成長率'}</Typography>
                 </div>
-                <TableContainer sx={{ maxHeight: 440 }}>
+                <TableContainer sx={{}}>
                     <Table stickyHeader size="small" >
                         <TableHead>
                             <TableRow >
@@ -131,8 +131,6 @@ const Growth: React.FC<Props> = ({ result }) => {
                                         <TableRow hover role="checkbox" tabIndex={-1} key={i}>
                                             {columns.map((column: any) => {
                                                 const value = row[column.id];
-                                                const year = row.year
-                                                const period = column.id
                                                 return (
                                                     <TableCell key={column.id} align={column.align} >
                                                         {column.id === "year" ?
