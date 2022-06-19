@@ -10,18 +10,46 @@ import ResultBoard from './components/ResultBoard';
 export interface Simulation {
   id: number
   bankrupt: boolean
+  stats: {
+    grossProfit: number
+    grossLoss: number
+    maxConsecutiveWins: number
+    maxConsecutiveLosses: number
+    maxDrawdown: number
+    maxDrawdownRate: number
+  }
   transitions: { index: number, balance: number }[]
 }
 
 export interface Statistics {
-  bankruptcyNum: number
+  bankruptcyNum: number //破産回数
   finalBalance: {
     min: number
     max: number
     avg: number
-  },
+  }
   maxBalance: number
   minBalance: number
+  maxConsecutiveWins: {
+    min: number
+    max: number
+    avg: number
+  }
+  maxConsecutiveLosses: {
+    min: number
+    max: number
+    avg: number
+  }
+  maxDrawdown: {
+    min: number
+    max: number
+    avg: number
+  }
+  maxDrawdownRate: {
+    min: number
+    max: number
+    avg: number
+  }
 }
 
 export interface Result {
@@ -65,7 +93,27 @@ export const defaultResult: Result = {
       avg: 0
     },
     maxBalance: 0,
-    minBalance: 0
+    minBalance: 0,
+    maxConsecutiveWins: {
+      min: 0,
+      max: 0,
+      avg: 0
+    },
+    maxConsecutiveLosses: {
+      min: 0,
+      max: 0,
+      avg: 0
+    },
+    maxDrawdown: {
+      min: 0,
+      max: 0,
+      avg: 0
+    },
+    maxDrawdownRate: {
+      min: 0,
+      max: 0,
+      avg: 0
+    },
   }
 }
 
@@ -79,22 +127,62 @@ class Simulator {
     const simulation: Simulation = {
       id: id,
       bankrupt: false,
+      stats: {
+        grossProfit: 0,
+        grossLoss: 0,
+        maxConsecutiveWins: 0,
+        maxConsecutiveLosses: 0,
+        maxDrawdown: 0,
+        maxDrawdownRate: 0,
+      },
       transitions: [
         { index: 0, balance: balance }
       ]
     }
+    let consecutiveWins = 0;
+    let consecutiveLosses = 0;
+    let maxBalance = data.balance;
+    let maxDrawdown = 0;
+    let maxDrawdownRate = 0;
     for (let i = 1; i < data.simulationMonthNum * data.monthlyTradeNum + 1; i++) {
       if (Math.random() <= data.winRate) {
         if (data.type === 'fixed') {
           balance += data.balance * data.reward;
+          simulation.stats.grossProfit += data.balance * data.reward
         } else {
           balance += balance * data.reward;
+          simulation.stats.grossProfit += balance * data.reward
+        }
+        consecutiveWins++;
+        consecutiveLosses = 0;
+        if (simulation.stats.maxConsecutiveWins < consecutiveWins) {
+          simulation.stats.maxConsecutiveWins = consecutiveWins;
+        }
+        if (balance > maxBalance) {
+          maxBalance = balance;
         }
       } else {
         if (data.type === 'fixed') {
           balance -= data.balance * data.risk;
+          simulation.stats.grossLoss -= data.balance * data.risk
         } else {
           balance -= balance * data.risk;
+          simulation.stats.grossLoss -= balance * data.risk
+        }
+        consecutiveLosses++;
+        consecutiveWins = 0;
+        if (simulation.stats.maxConsecutiveLosses < consecutiveLosses) {
+          simulation.stats.maxConsecutiveLosses = consecutiveLosses;
+        }
+        if (balance < maxBalance) {
+          maxDrawdown = maxBalance - balance;
+          if (simulation.stats.maxDrawdown < maxDrawdown) {
+            simulation.stats.maxDrawdown = Math.floor(maxDrawdown);
+          }
+          maxDrawdownRate = maxDrawdown / maxBalance;
+          if (simulation.stats.maxDrawdownRate < maxDrawdownRate) {
+            simulation.stats.maxDrawdownRate = maxDrawdownRate;
+          }
         }
       }
       if (balance <= data.balance * data.bankruptcyLevel) {
@@ -103,6 +191,7 @@ class Simulator {
       }
       simulation.transitions.push({ index: i, balance: Math.floor(balance) });
     }
+    simulation.stats.grossProfit = simulation.transitions[simulation.transitions.length - 1].balance - data.balance;
     return simulation
   }
 
@@ -115,13 +204,45 @@ class Simulator {
         avg: 0
       },
       maxBalance: 0,
-      minBalance: 0
+      minBalance: 0,
+      maxConsecutiveWins: {
+        min: 0,
+        max: 0,
+        avg: 0
+      },
+      maxConsecutiveLosses: {
+        min: 0,
+        max: 0,
+        avg: 0
+      },
+      maxDrawdown: {
+        min: 0,
+        max: 0,
+        avg: 0
+      },
+      maxDrawdownRate: {
+        min: 0,
+        max: 0,
+        avg: 0
+      },
     }
     stats.bankruptcyNum = simulations.filter(simulation => simulation.bankrupt).length;
     const finalBalanceList = simulations.map(simulation => simulation.transitions[simulation.transitions.length - 1].balance);
     stats.finalBalance.min = Math.min(...finalBalanceList);
     stats.finalBalance.max = Math.max(...finalBalanceList);
     stats.finalBalance.avg = finalBalanceList.reduce((a, b) => a + b, 0) / finalBalanceList.length;
+    stats.maxConsecutiveWins.max = simulations.map(simulation => simulation.stats.maxConsecutiveWins).reduce((a, b) => Math.max(a, b), 0);
+    stats.maxConsecutiveWins.min = simulations.map(simulation => simulation.stats.maxConsecutiveWins).reduce((a, b) => Math.min(a, b), stats.maxConsecutiveWins.max);
+    stats.maxConsecutiveWins.avg = simulations.map(simulation => simulation.stats.maxConsecutiveWins).reduce((a, b) => a + b, 0) / simulations.length;
+    stats.maxConsecutiveLosses.max = simulations.map(simulation => simulation.stats.maxConsecutiveLosses).reduce((a, b) => Math.max(a, b), 0);
+    stats.maxConsecutiveLosses.min = simulations.map(simulation => simulation.stats.maxConsecutiveLosses).reduce((a, b) => Math.min(a, b), stats.maxConsecutiveLosses.max);
+    stats.maxConsecutiveLosses.avg = simulations.map(simulation => simulation.stats.maxConsecutiveLosses).reduce((a, b) => a + b, 0) / simulations.length;
+    stats.maxDrawdown.max = simulations.map(simulation => simulation.stats.maxDrawdown).reduce((a, b) => Math.max(a, b), 0);
+    stats.maxDrawdown.min = simulations.map(simulation => simulation.stats.maxDrawdown).reduce((a, b) => Math.min(a, b), stats.maxDrawdown.max);
+    stats.maxDrawdown.avg = simulations.map(simulation => simulation.stats.maxDrawdown).reduce((a, b) => a + b, 0) / simulations.length;
+    stats.maxDrawdownRate.max = simulations.map(simulation => simulation.stats.maxDrawdownRate).reduce((a, b) => Math.max(a, b), 0);
+    stats.maxDrawdownRate.min = simulations.map(simulation => simulation.stats.maxDrawdownRate).reduce((a, b) => Math.min(a, b), stats.maxDrawdownRate.max);
+    stats.maxDrawdownRate.avg = simulations.map(simulation => simulation.stats.maxDrawdownRate).reduce((a, b) => a + b, 0) / simulations.length;
     return stats
   }
 
@@ -137,7 +258,27 @@ class Simulator {
           avg: 0
         },
         maxBalance: 0,
-        minBalance: 0
+        minBalance: 0,
+        maxConsecutiveWins: {
+          min: 0,
+          max: 0,
+          avg: 0
+        },
+        maxConsecutiveLosses: {
+          min: 0,
+          max: 0,
+          avg: 0
+        },
+        maxDrawdown: {
+          min: 0,
+          max: 0,
+          avg: 0
+        },
+        maxDrawdownRate: {
+          min: 0,
+          max: 0,
+          avg: 0
+        },
       }
     }
     for (let i = 0; i < data.simulationNum; i++) {

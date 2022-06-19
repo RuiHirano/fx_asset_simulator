@@ -3,6 +3,7 @@ import { Typography, Paper, TableContainer, Table, TableBody, TableCell, TableHe
 import moment from 'moment';
 import { Result } from '../App';
 import { useState } from 'react';
+import Statistics from './Statistics';
 
 const columns: any = [
     { id: 'year', label: '' },
@@ -174,6 +175,9 @@ const Growth: React.FC<Props> = ({ result }) => {
                         </TableBody>
                     </Table>
                 </TableContainer>
+                <div style={{ marginTop: 40 }}>
+                    <Statistics result={result} />
+                </div>
             </div>
         </div>
     );
