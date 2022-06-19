@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/fx_asset_simulatior/static/css/main.073c9b0a.css",
-    "main.js": "/fx_asset_simulatior/static/js/main.8e67574e.js",
-    "static/js/787.de382eb1.chunk.js": "/fx_asset_simulatior/static/js/787.de382eb1.chunk.js",
-    "index.html": "/fx_asset_simulatior/index.html",
-    "main.073c9b0a.css.map": "/fx_asset_simulatior/static/css/main.073c9b0a.css.map",
-    "main.8e67574e.js.map": "/fx_asset_simulatior/static/js/main.8e67574e.js.map",
-    "787.de382eb1.chunk.js.map": "/fx_asset_simulatior/static/js/787.de382eb1.chunk.js.map"
+    "main.css": "/fx-asset-simulatior/static/css/main.073c9b0a.css",
+    "main.js": "/fx-asset-simulatior/static/js/main.9f044975.js",
+    "static/js/787.de382eb1.chunk.js": "/fx-asset-simulatior/static/js/787.de382eb1.chunk.js",
+    "index.html": "/fx-asset-simulatior/index.html",
+    "main.073c9b0a.css.map": "/fx-asset-simulatior/static/css/main.073c9b0a.css.map",
+    "main.9f044975.js.map": "/fx-asset-simulatior/static/js/main.9f044975.js.map",
+    "787.de382eb1.chunk.js.map": "/fx-asset-simulatior/static/js/787.de382eb1.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.073c9b0a.css",
-    "static/js/main.8e67574e.js"
+    "static/js/main.9f044975.js"
   ]
 }
