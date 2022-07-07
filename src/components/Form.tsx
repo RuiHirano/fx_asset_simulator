@@ -4,6 +4,7 @@ import { defaultInputData, InputData } from "../App";
 import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
+import LoadingButton from '@mui/lab/LoadingButton';
 
 const InputLabel: React.FC<{ label: string, hint: string, children: React.ReactNode }> = ({ label, hint, children }) => {
   return (
@@ -91,8 +92,21 @@ const schema = yup.object({
   simulationNum: yup.number().positive().integer().min(0).max(100).required(),
 }).required();
 
+function delay(n: number) {
+  return new Promise(function (resolve) {
+    setTimeout(resolve, n * 1000);
+  });
+}
+
 const Form: React.FC<Props> = ({ onSubmit }) => {
-  const [data, setData] = React.useState<InputData>(defaultInputData);
+  const [loading, setLoading] = React.useState<boolean>(false);
+
+  const submit = async (data: InputData) => {
+    setLoading(true)
+    await delay(0.5)
+    onSubmit(data)
+    setLoading(false)
+  }
 
   const { handleSubmit, setValue, getValues, formState: { errors } } = useForm<InputData>(
     { defaultValues: defaultInputData, resolver: yupResolver(schema) }
@@ -122,7 +136,7 @@ const Form: React.FC<Props> = ({ onSubmit }) => {
         <SelectField label="損益計算方法" error={errors.type?.message} value={getValues("type")} values={[{ key: "fixed", label: "固定損益(単利計算)" }, { key: "variable", label: "変動損益(複利計算)" }]} description="" hints={[]} onChange={(value: string) => { setValue("type", value === "fixed" ? "fixed" : "variable") }} />
       </InputLabel>
       <div style={{ marginTop: 20, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <Button size="large" style={{ fontWeight: 'bold' }} variant="contained" onClick={handleSubmit(onSubmit)}>計算する</Button>
+        <LoadingButton loading={loading} size="large" style={{ fontWeight: 'bold' }} variant="contained" onClick={handleSubmit(submit)}>計算する</LoadingButton>
       </div>
     </Paper>
   );
