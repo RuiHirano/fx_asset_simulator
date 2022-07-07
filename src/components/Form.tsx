@@ -28,7 +28,7 @@ const InputField: React.FC<{ label?: string, error?: string, value: number, unit
             {label}
           </Typography>
         }
-        <TextField type="number" size="small" defaultValue={value} onChange={onChange} />
+        <TextField type="number" InputProps={{ inputProps: { style: { textAlign: 'right' } } }} size="small" defaultValue={value} onChange={onChange} />
         <Typography style={{ marginLeft: 10, fontSize: 15, color: 'black' }}>
           {unit}
         </Typography>
@@ -90,6 +90,7 @@ const schema = yup.object({
   monthlyTradeNum: yup.number().positive().integer().min(0).max(1000).required(),
   simulationMonthNum: yup.number().positive().integer().min(0).max(60).required(),
   simulationNum: yup.number().positive().integer().min(0).max(100).required(),
+  monthlyDeposit: yup.number().positive().integer().min(0).max(999999999).required(),
 }).required();
 
 function delay(n: number) {
@@ -133,6 +134,7 @@ const Form: React.FC<Props> = ({ onSubmit }) => {
         <InputField label="シミュレーション回数" value={getValues("simulationNum")} unit="回" description="半角数字のみ、0～100まで" hints={[]} onChange={(e) => { setValue("simulationNum", parseInt(e.target.value)) }} />
         <InputField label="月当たりのトレード件数" value={getValues("monthlyTradeNum")} unit="件" description="半角数字のみ、0～1000まで" hints={[]} onChange={(e) => { setValue("monthlyTradeNum", parseInt(e.target.value)) }} />
         <InputField label="シミュレーション期間" error={errors.simulationMonthNum?.message} value={getValues("simulationMonthNum")} unit="ヶ月" description="半角数字のみ、0～60まで" hints={[]} onChange={(e) => { setValue("simulationMonthNum", parseInt(e.target.value)) }} />
+        <InputField label="月あたりの積み立て金" error={errors.monthlyDeposit?.message} value={getValues("monthlyDeposit")} unit="円" description="半角数字のみ、0～999,999,999まで" hints={[]} onChange={(e) => { setValue("monthlyDeposit", parseInt(e.target.value)) }} />
         <SelectField label="損益計算方法" error={errors.type?.message} value={getValues("type")} values={[{ key: "fixed", label: "固定損益(単利計算)" }, { key: "variable", label: "変動損益(複利計算)" }]} description="" hints={[]} onChange={(value: string) => { setValue("type", value === "fixed" ? "fixed" : "variable") }} />
       </InputLabel>
       <div style={{ marginTop: 20, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>

@@ -68,6 +68,7 @@ export interface InputData {
   monthlyTradeNum: number
   simulationMonthNum: number
   simulationNum: number
+  monthlyDeposit: number
 }
 
 export const defaultInputData: InputData = {
@@ -79,7 +80,8 @@ export const defaultInputData: InputData = {
   bankruptcyLevel: 0.5,
   monthlyTradeNum: 10,
   simulationMonthNum: 6,
-  simulationNum: 10
+  simulationNum: 10,
+  monthlyDeposit: 0
 }
 
 export const defaultResult: Result = {
@@ -145,6 +147,10 @@ class Simulator {
     let maxDrawdown = 0;
     let maxDrawdownRate = 0;
     for (let i = 1; i < data.simulationMonthNum * data.monthlyTradeNum + 1; i++) {
+      if (i % data.monthlyTradeNum === 0) {
+        // add monthly deposit
+        balance += data.monthlyDeposit
+      }
       if (Math.random() <= data.winRate) {
         if (data.type === 'fixed') {
           balance += data.balance * data.reward;
